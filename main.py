@@ -57,8 +57,7 @@ async def turbopinte(ctx):
     used = 1
     if not author == None:
         data = author["commands"]["pinte"]
-        print(data)
-        new_rate = data["rate"] * (0.9**get_minutes(time.time(),data["last_drank"])) + boost
+        new_rate = data["rate"] * (0.95**get_minutes(time.time(),data["last_drank"])) + boost
         used = data["used"]+1
         users.update_one(search_query, {'$set' : {"name" : ctx.author.name, "id" : ctx.author.id, 'commands' : { 'pinte' : { 'used' : used, 'rate' : new_rate, 'last_drank' : time.time()}}}})
     else:
