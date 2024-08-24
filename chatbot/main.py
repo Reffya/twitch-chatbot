@@ -4,12 +4,13 @@ import time
 import os
 from dotenv import load_dotenv
 from pymongo import MongoClient
+import requests
 
 uri = os.getenv("MONGO_URL")
 client : MongoClient = MongoClient(uri)
-database = client.get_database("twitch_chatbot")
+database = client.get_database(os.getenv("DB"))
 users = database.get_collection("user")
-
+URL = 'http://localhost:5000'
 
 def get_minutes(a,b):
     c = a-b
@@ -22,7 +23,7 @@ bot = commands.Bot(
         client_id=os.getenv("CLIENT_ID"),
         nick="Reffyatron",
         prefix="!",
-        initial_channels=['superfatyoh2','reffya']
+        initial_channels=[os.getenv("INITIAL_CHANNEL")]
     )
 
 
@@ -63,7 +64,7 @@ async def turbopinte(ctx):
     else:
         new_rate = boost
         users.insert_one({"name" : ctx.author.name, "id" : ctx.author.id, "commands" : { "pinte" : {"used" : 1, "rate" : new_rate, "last_drank" : time.time()}}})
-        
+    requests.post(URL+"/put-alert", json={'alert' : 'pinte'})
     await ctx.reply("Voilà ton verre, tu es bourré à " + str(int(new_rate)) +"%. C'est déjà la " + str(used) + "e fois que tu bois")
     
 if __name__ == '__main__':
