@@ -5,16 +5,37 @@ import os
 from dotenv import load_dotenv
 from pymongo import MongoClient
 import requests
+from llm_model import LLM_Model
+from prompts import LLM_PROMPTS
 
 uri = os.getenv("MONGO_URL")
 client : MongoClient = MongoClient(uri)
 database = client.get_database(os.getenv("DB"))
 users = database.get_collection("user")
 URL = 'http://localhost:5000'
+alerts_on = bool(os.getenv("ALERTS_ON") == "True")
+model = LLM_Model()
 
 def get_minutes(a,b):
     c = a-b
     return c / 120
+
+def generate(prompt,params):
+
+    context = prompt["context"]
+    text = prompt["text"]
+    max_new_tokens = prompt["max_new_tokens"]
+
+    context = context.format(**params)
+    text = text.format(**params)
+
+    global last_message
+    result = ""
+    while result == "" :
+        result = model.infer(context=context, text=text, max_new_tokens=max_new_tokens)
+    last_message = result
+    return result
+
 
 alcool_rates = {}
 load_dotenv()
@@ -64,8 +85,13 @@ async def turbopinte(ctx):
     else:
         new_rate = boost
         users.insert_one({"name" : ctx.author.name, "id" : ctx.author.id, "commands" : { "pinte" : {"used" : 1, "rate" : new_rate, "last_drank" : time.time()}}})
-    requests.post(URL+"/put-alert", json={'alert' : 'pinte'})
-    await ctx.reply("Voilà ton verre, tu es bourré à " + str(int(new_rate)) +"%. C'est déjà la " + str(used) + "e fois que tu bois")
+   
+    if alerts_on:
+        requests.post(URL+"/put-alert", json={'alert' : 'pinte'})
+
+    answer = generate(LLM_PROMPTS.PINTE,{"user" : ctx.author.name, "rate" : new_rate})
+    print(answer)
+    await ctx.reply(answer)
     
 if __name__ == '__main__':
     bot.run()

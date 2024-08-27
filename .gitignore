@@ -3,3 +3,5 @@ venv
 nohup.out
 custom_alerts/*.sh
 *.mp3
+chatbot/datas/*
+__pycache__
