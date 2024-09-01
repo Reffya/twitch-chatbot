@@ -25,8 +25,13 @@ class ANSWER_TEMPLATE:
 
 class ANNOUNCEMENT_MSG:
 
-    MSGS = [
+    MSGS = 
+    [
         "Soif ? enfile toi une !turbopinte",
         "Si tu es mauvais sur smite, essaie la commande !whyisuck et laisse moi te guider !",
-        "Avec !namepoetry je peux écrire un petit poème rien que pour toi !"
+        "Avec !namepoetry je peux écrire un petit poème rien que pour toi !",
+        "Si tu veux savoir quels sont les objets dispo dans smite 2, j'ai fais une longue vidéo récap sur le sujet, ça se passe ici : https://youtu.be/2xMDcGlRirA",
+        "Tu démarres sur Smite 2? Voilà un petit guide pour t'expliquer comment build ton perso et où commencer une game! https://youtu.be/BLInFSD2LXg?si=aP-qp6iGbhlHCwtd",
+        "Je vois que votre verre est vide, je vous ressers une pinte? !pinte",
+        "Tu passes un bon moment dans la taverne de SuperFatYoh? Alors n'oublie pas de suivre la chaine! C'est gratuit et ça nous aide beaucoup!"
     ]
