@@ -25,8 +25,7 @@ class ANSWER_TEMPLATE:
 
 class ANNOUNCEMENT_MSG:
 
-    MSGS = 
-    [
+    MSGS = [
         "Soif ? enfile toi une !turbopinte",
         "Si tu es mauvais sur smite, essaie la commande !whyisuck et laisse moi te guider !",
         "Avec !namepoetry je peux écrire un petit poème rien que pour toi !",

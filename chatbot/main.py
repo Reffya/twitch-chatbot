@@ -56,7 +56,7 @@ def generate(prompt,params):
 async def announcement():
         channel = bot.get_channel(os.getenv("INITIAL_CHANNEL"))
         if(len(channel.chatters) > 0 ):
-            msg = ANNOUNCEMENT_MSG.MSGS[random.randint(0,len(ANNOUNCEMENT_MSG.MSGS)-1)]
+            msg = get_random_entry(ANNOUNCEMENT_MSG.MSGS)
             await channel.send(msg)
 
 @bot.event
