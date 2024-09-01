@@ -1,14 +1,13 @@
 import time
 from llama_cpp import Llama
-
-LLM_MODEL_PATH = "datas/Meta-Llama-3-8B-Instruct-Q5_K_S.gguf"
+import os
 
 DEFAULT_CONTEXT = "Tu es un chatbot sur le site internet twitch qui répond aux utilisateurs quand ils effectuent une commande"
 
 class LLM_Model:
-    def __init__(self):
+    def __init__(self,path):
         self.llm = Llama(
-            model_path=LLM_MODEL_PATH,
+            model_path=path,
             n_ctx=8192,
             n_threads=8,
             n_gpu_layers=35
