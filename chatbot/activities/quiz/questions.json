@@ -1,0 +1,28 @@
+[
+    {   "name": "VGS",
+        "intro" : "Trouvez les commandes pour les différents VGS qui vont suivre.",
+        "template" : "Trouvez le VGS pour: {question}",
+        "questions" : [
+                {"question" : "I'm the greatest !", "answer": "VEG" },
+                {"question" : "You rock !", "answer" : "VER"},
+                {"question" : "Take this jungle buff", "answer" : "VSBT"},
+                {"question" : "I need the jungle buff", "answer" : "VSBN"},
+                {"question" : "Hi", "answer" : "VVGH"},
+                {"question" : "Enemies in the left jungle", "answer" : "VBJ1"},
+                {"question" : "It's a trap", "answer" : "VVVT"},
+                {"question" : "I'm on it", "answer" : "VSO"},
+                {"question" : "Place a ward for teleport", "answer" : "VVVW"},
+                {"question" : "Attack fire giant !", "answer" : "VAF"},
+                {"question" : "Enemies have returned to base", "answer" : "VBB"},
+                {"question" : "Be careful !", "answer" : "VCC"},
+                {"question" : "Defend the Gold Fury", "answer" : "VDF"},
+                {"question" : "Ha Ha Ha Ha", "answer" : "VEL"},
+                {"question" : "Enemy missing right" , "answer" : "VF3"},
+                {"question" : "Gank middle lane!", "answer" : "VG2"},
+                {"question" : "Need healing !", "answer" : "VHS"},
+                {"question" : "We need wards" , "answer" : "VQN" }
+
+
+        ]
+}
+]

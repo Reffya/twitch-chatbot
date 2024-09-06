@@ -33,3 +33,19 @@ class LLM_Model:
         inference_time = end_time - start_time 
         print(f"Inference Time: {inference_time} seconds")
         return result
+
+    def differ(self, text, max_new_tokens=20, temperature=0.3):
+        answer = self.llm.create_chat_completion(messages=[
+                {"role": "system", "content": DEFAULT_CONTEXT},
+                {
+                    "role": "user",
+                    "content": text
+                }
+            ],max_tokens=max_new_tokens,temperature=temperature)
+        print(answer)
+        return answer['choices'][0]['message']['content']
+    
+    def complete(self, text, max_new_tokens=20, temperature=0.3):
+        answer = self.llm.create_completion(prompt=text,max_tokens=max_new_tokens,temperature=temperature,echo=True)
+        print(answer)
+        return answer['choices'][0]['text']

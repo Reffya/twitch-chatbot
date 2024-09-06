@@ -1,3 +1,5 @@
+from activities.quiz.quizz import Quizz
+from activities.activity import Activity
 from twitchio.ext import commands, routines
 import random
 import time
@@ -6,119 +8,155 @@ from dotenv import load_dotenv
 from pymongo import MongoClient
 import requests
 from llm_model import LLM_Model
-from prompts import LLM_PROMPTS,ANSWER_TEMPLATE,ANNOUNCEMENT_MSG
+from datas.prompts import LLM_PROMPTS,ANSWER_TEMPLATE,ANNOUNCEMENT_MSG
 
-load_dotenv()
-uri = os.getenv("MONGO_URL")
-print(os.getenv("DB"))
-client : MongoClient = MongoClient(uri)
-database = client.get_database(os.getenv("DB"))
-users = database.get_collection("user")
 URL = 'http://localhost:5000'
-alerts_on = bool(os.getenv("ALERTS_ON") == "True")
-model = LLM_Model(os.getenv("LLM_PATH"))
-
-alcool_rates = {}
-load_dotenv()
-bot = commands.Bot(
-        token= os.getenv("TOKEN"),
-        client_id=os.getenv("CLIENT_ID"),
-        nick="Reffyatron",
-        prefix="!",
-        initial_channels=[os.getenv("INITIAL_CHANNEL")]
-    )
-
-def get_minutes(a,b):
-    c = a-b
-    return c / 120
 
 def get_random_entry(list):
-    index = random.randint(0,len(list)-1)
-    return list[index]
+        index = random.randint(0,len(list)-1)
+        return list[index]
 
-def generate(prompt,params):
+def get_minutes(a,b):
+        c = a-b
+        return c / 120
 
-    context = prompt["context"]
-    text = prompt["text"]
-    max_new_tokens = prompt["max_new_tokens"]
+def post_process(text):
+        print(text)
+        while(len(text) > 500):
+            sentences = text.split('.')
+            text = ""
+            for i in range(len(sentences)-2):
+                text = text + sentences[i] + '.'
+                
+        return text
 
-    context = context.format(**params)
-    text = text.format(**params)
+def format(str,params):
+     return str.format(**params)
 
-    global last_message
-    result = ""
-    while result == "" :
-        result = model.infer(context=context, text=text, max_new_tokens=max_new_tokens)
-    last_message = result
-    return result
+class Bot(commands.Bot):
+    def __init__(self):
+        load_dotenv()
+        uri = os.getenv("MONGO_URL")
+        self.client : MongoClient = MongoClient(uri)
+        database = self.client.get_database(os.getenv("DB"))
+        self.users = database.get_collection("user")
+        self.alerts_on = bool(os.getenv("ALERTS_ON") == "True")
+        self.model = LLM_Model(os.getenv("LLM_PATH"))
+        self.channel = None
+        self.current_activity: Activity = None
 
-@routines.routine(seconds=900, wait_first=True)
-async def announcement():
-        channel = bot.get_channel(os.getenv("INITIAL_CHANNEL"))
-        if(len(channel.chatters) > 0 ):
-            msg = get_random_entry(ANNOUNCEMENT_MSG.MSGS)
-            await channel.send(msg)
-
-@bot.event
-async def event_message(message):
-    print(message)
-
-@bot.command(name='whyisuck')
-async def whyisuck(ctx):
-    await ctx.reply("L'analyse de ton gameplay est en cours, sois patient")
-    answer = generate(LLM_PROMPTS.WHYISUCK,{"user" : ctx.author.name, "theme" : get_random_entry(LLM_PROMPTS.WHYISUCK.get("themes"))})
-    print(answer)
-    await ctx.reply(answer)
+        super().__init__(token= os.getenv("TOKEN"),
+            client_id=os.getenv("CLIENT_ID"),
+            nick="Reffyatron",
+            prefix="!",
+            initial_channels=[os.getenv("INITIAL_CHANNEL")])
 
 
-@bot.command(name='pintefame')
-async def pintefame(ctx):
-    aggregation = [{ '$sort': { 'commands.pinte.used': -1 } },{'$limit' : 10}]
+    def generate(self,prompt,params,is_generate=True):
+        result = ""
+        context = prompt["context"]
+        text = prompt["text"]
+        max_new_tokens = prompt["max_new_tokens"]
 
-    leaderboard = users.aggregate(aggregation)
-    output = ""
-    index = 1
+        context = format(context,params)
+        text = format(text,params)
+        if is_generate:
+            result = self.model.differ(text=text, max_new_tokens=max_new_tokens)
+        else:
+            result = self.model.complete(text=text, max_new_tokens=max_new_tokens)
+        return post_process(result)
 
-    for user in leaderboard:
-        output += " " + str(index) + ". " + user["name"] + ": " + str(user["commands"]["pinte"]["used"]) + " pinte(s) |"
-        index = index + 1
+    async def event_message(self, message):
+        if message.echo:
+             return
+        
+        if not(self.current_activity == None):
+             await self.current_activity.on_message(message)
+             if self.current_activity.is_finished(): self.current_activity = None
+             
+        await self.handle_commands(message)
 
-    output = output[:-1]
-    
-    
-    await ctx.reply(output)
+    async def event_ready(self):
+        self.channel = super().get_channel(os.getenv("INITIAL_CHANNEL"))
+        self.announcement.start()
+        
+    @routines.routine(seconds=900, wait_first=True)
+    async def announcement(self):
+            if(len(self.channel.chatters) > 0 ):
+                msg = self.get_random_entry(ANNOUNCEMENT_MSG.MSGS)
+                await self.channel.send(msg)
 
-@bot.command(name='namepoetry')
-async def namepoetry(ctx):
-    await ctx.reply("Je génère ton poème, sois patient")
-    answer = generate(LLM_PROMPTS.NAMEPOETRY,{"user" : ctx.author.name, "forme" : get_random_entry(LLM_PROMPTS.NAMEPOETRY.get("forme")),
+    @commands.command()
+    async def start_quiz(self,ctx):
+        if self.current_activity:
+             await ctx.reply("Sorry, another activity is already in progress")
+             return
+        
+        self.current_activity = Quizz(self.channel)
+        await ctx.reply("starting quiz")
+        await self.current_activity.start()
+
+    @commands.command()
+    async def namelore(self,ctx):
+        await ctx.reply("Laisse moi un instant pour trouver l'inspiration.")
+        answer = self.generate(LLM_PROMPTS.NAMELORE,{"user" : ctx.author.name, "theme" : get_random_entry(LLM_PROMPTS.NAMELORE.get('themes'))},False)
+        await ctx.reply(answer)
+
+    @commands.command()
+    async def whyisuck(self,ctx):
+        await ctx.reply("L'analyse de ton gameplay est en cours, sois patient")
+        answer = self.generate(LLM_PROMPTS.WHYISUCK,{"user" : ctx.author.name, "theme" : get_random_entry(LLM_PROMPTS.WHYISUCK.get("themes"))})
+        await ctx.reply(answer)
+
+
+    @commands.command()
+    async def pintefame(self,ctx):
+        aggregation = [{ '$sort': { 'commands.pinte.used': -1 } },{'$limit' : 10}]
+
+        leaderboard = self.users.aggregate(aggregation)
+        output = ""
+        index = 1
+
+        for user in leaderboard:
+            output += " " + str(index) + ". " + user["name"] + ": " + str(user["commands"]["pinte"]["used"]) + " pinte(s) |"
+            index = index + 1
+
+        output = output[:-1]
+        
+        
+        await ctx.reply(output)
+
+    @commands.command()
+    async def namepoetry(self, ctx):
+        await ctx.reply("Je génère ton poème, sois patient")
+        answer = self.generate(LLM_PROMPTS.NAMEPOETRY,{"user" : ctx.author.name, "forme" : get_random_entry(LLM_PROMPTS.NAMEPOETRY.get("forme")),
                                                "theme" : get_random_entry(LLM_PROMPTS.NAMEPOETRY.get("themes")) })
-    await ctx.reply(answer)
+        await ctx.reply(answer)
 
-@bot.command(name='turbopinte')
-async def turbopinte(ctx):
-    search_query = {"$or" : [{"name" : ctx.author.name},{"id": ctx.author.id}]}
-    boost = random.randint(5,20)
-    author = users.find_one(search_query)
-    new_rate = 0
-    used = 1
-    if not author == None:
-        data = author["commands"]["pinte"]
-        new_rate = data["rate"] * (0.95**get_minutes(time.time(),data["last_drank"])) + boost
-        used = data["used"]+1
-        users.update_one(search_query, {'$set' : {"name" : ctx.author.name, "id" : ctx.author.id, 'commands' : { 'pinte' : { 'used' : used, 'rate' : new_rate, 'last_drank' : time.time()}}}})
-    else:
-        new_rate = boost
-        users.insert_one({"name" : ctx.author.name, "id" : ctx.author.id, "commands" : { "pinte" : {"used" : 1, "rate" : new_rate, "last_drank" : time.time()}}})
-   
-    if alerts_on:
-        requests.post(URL+"/put-alert", json={'alert' : 'pinte'})
+    @commands.command()
+    async def turbopinte(self,ctx):
+        search_query = {"$or" : [{"name" : ctx.author.name},{"id": ctx.author.id}]}
+        boost = random.randint(5,20)
+        author = self.users.find_one(search_query)
+        new_rate = 0
+        used = 1
+        if not author == None:
+            data = author["commands"]["pinte"]
+            new_rate = data["rate"] * (0.95**get_minutes(time.time(),data["last_drank"])) + boost
+            used = data["used"]+1
+            self.users.update_one(search_query, {'$set' : {"name" : ctx.author.name, "id" : ctx.author.id, 'commands' : { 'pinte' : { 'used' : used, 'rate' : new_rate, 'last_drank' : time.time()}}}})
+        else:
+            new_rate = boost
+            self.users.insert_one({"name" : ctx.author.name, "id" : ctx.author.id, "commands" : { "pinte" : {"used" : 1, "rate" : new_rate, "last_drank" : time.time()}}})
+    
+        if self.alerts_on:
+            requests.post(URL+"/put-alert", json={'alert' : 'pinte'})
 
-    params = {"user" : ctx.author.name, "rate" : round(new_rate), "number" : used}
-    answer = ANSWER_TEMPLATE.PINTE.format(**params)
-    await ctx.reply(answer)
+        params = {"user" : ctx.author.name, "rate" : round(new_rate), "number" : used}
+        answer = ANSWER_TEMPLATE.PINTE.format(**params)
+        await ctx.reply(answer)
     
 if __name__ == '__main__':
-    announcement.start()
+    bot = Bot()
     bot.run()
-    client.close()
+   # client.close()
