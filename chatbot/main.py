@@ -1,5 +1,6 @@
 from activities.quiz.quizz import Quizz
 from activities.activity import Activity
+from activities.reverse_akinator.akinator import Reverse_Akinator
 from twitchio.ext import commands, routines
 import random
 import time
@@ -7,7 +8,7 @@ import os
 from dotenv import load_dotenv
 from pymongo import MongoClient
 import requests
-from llm_model import LLM_Model
+from llm.llm_model import complete, differ
 from datas.prompts import LLM_PROMPTS,ANSWER_TEMPLATE,ANNOUNCEMENT_MSG
 
 URL = 'http://localhost:5000'
@@ -41,7 +42,6 @@ class Bot(commands.Bot):
         database = self.client.get_database(os.getenv("DB"))
         self.users = database.get_collection("user")
         self.alerts_on = bool(os.getenv("ALERTS_ON") == "True")
-        self.model = LLM_Model(os.getenv("LLM_PATH"))
         self.channel = None
         self.current_activity: Activity = None
 
@@ -61,9 +61,9 @@ class Bot(commands.Bot):
         context = format(context,params)
         text = format(text,params)
         if is_generate:
-            result = self.model.differ(text=text, max_new_tokens=max_new_tokens)
+            result = differ(text=text, max_new_tokens=max_new_tokens)
         else:
-            result = self.model.complete(text=text, max_new_tokens=max_new_tokens)
+            result = complete(text=text, max_new_tokens=max_new_tokens)
         return post_process(result)
 
     async def event_message(self, message):
@@ -83,7 +83,7 @@ class Bot(commands.Bot):
     @routines.routine(seconds=900, wait_first=True)
     async def announcement(self):
             if(len(self.channel.chatters) > 0 ):
-                msg = self.get_random_entry(ANNOUNCEMENT_MSG.MSGS)
+                msg = get_random_entry(ANNOUNCEMENT_MSG.MSGS)
                 await self.channel.send(msg)
 
     @commands.command()
@@ -95,6 +95,16 @@ class Bot(commands.Bot):
         self.current_activity = Quizz(self.channel)
         await ctx.reply("starting quiz")
         await self.current_activity.start()
+
+
+    @commands.command()
+    async def start_akinator(self,ctx):
+         if self.current_activity:
+             await ctx.reply("Sorry, another activity is already in progress")
+             return
+         self.current_activity = Reverse_Akinator(self.channel)
+         await ctx.reply("starting reverse akinator")
+         await self.current_activity.start()
 
     @commands.command()
     async def namelore(self,ctx):

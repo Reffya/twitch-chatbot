@@ -5,7 +5,7 @@ import json
 import random
 import time
 
-from datas.prompts import QUIZ_TEMAPLATES
+from datas.prompts import QUIZ_TEMPLATES
 
 def get_random_entry(list):
         index = random.randint(0,len(list)-1)
@@ -32,7 +32,7 @@ class Quizz(Activity):
             # choosing quiz
             quiz = get_random_entry(data)
 
-        await self.send(format(QUIZ_TEMAPLATES.CHOSEN, {"subject" : quiz["name"]}))
+        await self.send(format(QUIZ_TEMPLATES.CHOSEN, {"subject" : quiz["name"]}))
         self.questions = quiz["questions"]
         self.template = quiz["template"]
 
@@ -69,18 +69,18 @@ class Quizz(Activity):
         if(crt_score == 5):
             await self.end(author)
         else:
-            await self.send(format(QUIZ_TEMAPLATES.CORRECT, { "user" : author, "points" : crt_score}),True)
+            await self.send(format(QUIZ_TEMPLATES.CORRECT, { "user" : author, "points" : crt_score}),True)
             await self.ask_question()
 
     async def end(self, winner):
-        await self.send(format(QUIZ_TEMAPLATES.END,{"user" : winner}),False)
+        await self.send(format(QUIZ_TEMPLATES.END,{"user" : winner}),False)
         self.ended = True
 
     def is_finished(self):
         return self.ended
     
     async def kill(self):
-        await self.send(QUIZ_TEMAPLATES.CANCELLED, False)
+        await self.send(QUIZ_TEMPLATES.CANCELLED, False)
         self.ended = True
 
 
