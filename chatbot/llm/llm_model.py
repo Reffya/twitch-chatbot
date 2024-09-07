@@ -16,7 +16,7 @@ llm = Llama(
     )
     
 
-def infer(context, text, max_new_tokens=20):
+def infer(context, text, max_new_tokens=20, seed=None):
     start_time = time.time()  # Start time measurement
 
     chat_response = llm.create_chat_completion(
@@ -28,7 +28,7 @@ def infer(context, text, max_new_tokens=20):
                 }
             ],
         max_tokens = max_new_tokens,
-        temperature=0.3
+        temperature=0.3, seed=seed
     )
     result = chat_response['choices'][0]['message']['content'].replace("\n\n", "\n")
     result = result.replace("[INST]", "").replace("[\INST]", "").replace("[SYS]","")
@@ -37,14 +37,14 @@ def infer(context, text, max_new_tokens=20):
     print(f"Inference Time: {inference_time} seconds")
     return result
 
-def differ(text, max_new_tokens=20, temperature=0.3, context=DEFAULT_CONTEXT):
+def differ(text, max_new_tokens=20, temperature=0.3, context=DEFAULT_CONTEXT, seed=None, top_k=40):
     answer = llm.create_chat_completion(messages=[
             {"role": "system", "content": context},
             {
                 "role": "user",
                 "content": text
             }
-        ],max_tokens=max_new_tokens,temperature=temperature)
+        ],max_tokens=max_new_tokens,temperature=temperature,seed=seed, top_k=top_k)
     print(answer)
     return answer['choices'][0]['message']['content']
     

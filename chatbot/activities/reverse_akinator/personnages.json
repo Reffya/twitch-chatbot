@@ -1,99 +1,75 @@
 [
     {
-        "nom" : "Héraclès",
-        "description" : "Hercules est un héros de la mythologie grecque. Hercules est un humain fils du dieu Zeus"
+        "nom" : "Héraclès"
     },
     {
-        "nom" : "Hera",
-        "description" : "Hera est la déesse grecque du mariage. Elle est mariée à Zeus et doit constamment affronter ses infidélités."
+        "nom" : "Hera"
     },
     {
-        "nom" : "Fenrir",
-        "description" : "Fenrir est un monstre de la mythologie nordique. Il prend al forme d'un loup géant. Il s'agit d'un des fils de Loki et il est destiné à tuer Odin lors du Ragnarok"
+        "nom" : "Fenrir"
     },
     {
-        "nom" : "Thor",
-        "description" : "Thor est le dieu du tonnerre dans la mythologie nordique. Il est le fils d'Odin et manie le marteau Mjölnir. Il est destiné à s'entretuer avec le serpent géant Jörmungandr durant le Ragnarok" 
+        "nom" : "Thor"
     },
     {
-        "nom" : "Nu Wa",
-        "description" : "Nu wa est une déesse chinoise ayant créé l'humanité à partir de figures en argile. Elle a restauré la balance du monde."
+        "nom" : "Nu Wa"
     },
     {
-        "nom" : "Anhur",
-        "description" : "Anhur est le dieu égyptien de la guerre. Il prend la forme d'un lion et se bat avec sa lance. Il est le fils du dieu Ra et le frère de la déesse Bastet." 
+        "nom" : "Anhur"
     },
     {
-        "nom" : "Athena",
-        "description" : "Athena est la déesse de la sagesse grecque. Elle est la fille de Zeus et de Thetys. Elle vient en aide aux héros pendant leurs quêtes."
+        "nom" : "Athena"
     },
     {
-        "nom" : "Ares",
-        "description" : "Are sest le dieu grec de la guerre, fils de Zeus et de Héra. Il se bat avec des chaînes et des flammes."
+        "nom" : "Ares"
     },
     {
-        "nom" : "Bellona",
-        "description" : "Bellona est la déesse romaine de la guerre. Elle est souvent représentée avec des armes tels que son épée, un marteau ou un fouet."
+        "nom" : "Bellona"
     },
     {
-        "nom" : "Kukulkan",
-        "description" : "Kukulkan est un dieu maya, il s'agit d'un serpent à plumes ayant apporté les 4 éléments dans le monde maya, ayant gardé le contrôle du vent."
+        "nom" : "Kukulkan"
     },
     {
-        "nom" : "Ymir",
-        "description" : "Ymir est le géant de glace de la mythologie nordique. Tué par Odin lors de la création du monde, on dit que son cadavre constitue le monde d Midgard"
+        "nom" : "Ymir"
     },
     {
-        "nom" : "Zeus",
-        "description" : "Zeus est le dieu du ciel dans la mythologie grecque. Il est marié à Hera et contrôle l'olympe. Il a commis de nombreuses infidélités et nombre de ses fils sont des héros grecs."
+        "nom" : "Zeus"
     },
     {
-        "nom" : "Odin",
-        "description" : "Odin est le dieu principal de la mythologie nordique. Chef des Aesir, c'est lui qui dirige Asgard. Il est le père de Thor. Il est souvent représenté avec un oeil en moins couvert par un patch et sa lance."
+        "nom" : "Odin"
     },
     {
-        "nom" : "Sol",
-        "description" : "Sol est la déesse nordique du soleil. Elle parcourt le ciel en fuyant le loup Skoll, fils de Fenrir."
+        "nom" : "Sol"
     },
     {
-        "nom" : "neith",
-        "description" : "Neith est la déesse du destin égyptienne. Il s'agit de la première déesse apparue après la création du monde. Après avoir aidé les premiers humains, ses fils guident les âmes vers l'au-delà."
+        "nom" : "neith"
     },
     {
-        "nom" : "Jing Wei",
-        "description" : "Jing wei est une figure de la mythologie chinoise. Il ms'agit d'une princesse morte noyée dans l'océan. Après avoir resscuscitée avec des ailes, elle s'est jurée de remplir l'océan de pierres jusqu'à ce qu'il disparaisse"
+        "nom" : "Jing Wei"
     },
     {
-        "nom" : "Anubis",
-        "description" : "Anubis est le dieu égyptien de la mort, il est représenté avec une tête de chacal. Anubis pèse le coeur des défunts à leur mort pour évaluer si ils peuvent aller dans l'au-delà"
+        "nom" : "Anubis"
     },
     {
-        "nom" : "Bacchus",
-        "description" : "Bacchus est le dieu romain de la fête et des arts. Il est l'équivalent du dieu grec Dyonisos"
+        "nom" : "Bacchus"
     },
     {
-        "nom" : "Chaac",
-        "description" : "Chaac est le dieu maya de la pluie et des tempêtes, il est généralement représenté avec sa hache"
+        "nom" : "Chaac"
     },
     {
-        "nom" : "Cernunnos",
-        "description" : "Cernunnos est un dieu celte de la chasse, il est souvent représenté comme un cerf debout surs ses deux pattes et chassant avec un glaive"
+        "nom" : "Cernunnos"
     },
     {
-        "nom" : "Susano",
-        "description" : "Susano est le dieu japonais des tempêtes. Il est représenté avec son katana."
+        "nom" : "Susano"
     },
     {
-        "nom" : "Thanatos",
-        "description" : "Thanatos est le dieu grec de la mort. Il est représenté avec sa faux. Il collecte l'âme des mortels lorsque leur moment est venu."
+        "nom" : "Thanatos"
     },
     {
-        "nom" : "Hadès",
-        "description" : "Hadès est le dieu grec des enfers, frère de Zeus et de Poséidon."
+        "nom" : "Hadès"
     },
     {
-        "nom" : "Loki",
-        "description" : "Loki est le dieu de la tromperie dans la mythologie nordique. Il est le père de Fenrir."
+        "nom" : "Loki"
     }
 
 ]

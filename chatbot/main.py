@@ -98,13 +98,18 @@ class Bot(commands.Bot):
 
 
     @commands.command()
-    async def start_akinator(self,ctx):
+    async def start_akinator(self,ctx, mode=""):
          if self.current_activity:
              await ctx.reply("Sorry, another activity is already in progress")
              return
+              
          self.current_activity = Reverse_Akinator(self.channel)
          await ctx.reply("starting reverse akinator")
-         await self.current_activity.start()
+
+         if mode and mode == 'random':
+              await self.current_activity.start(random_mode=True)
+         else:
+              await self.current_activity.start(random_mode=False)
 
     @commands.command()
     async def namelore(self,ctx):
